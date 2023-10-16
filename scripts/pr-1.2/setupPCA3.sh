@@ -4,7 +4,7 @@
 
 ip -4 addr add 192.168.10.3/24 broadcast 192.168.20.255 dev eth0
 
-ip -4 addr add 192.168.7.10/24 dev eth1
+ip -4 addr add 192.168.7.10/24 broadcast 192.168.7.255 dev eth1
 
 sysctl -w net.ipv4.ip_forward=1
 
