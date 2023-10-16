@@ -2,27 +2,12 @@
 
 # SETUP PCC1
 
-tee /etc/quagga/zebra.conf > /dev/null << EOF
-hostname Router
-password zebra
-enable password zebra
+service zebra stop
+service ripd stop
 
-interface eth0
-no shutdown
-ip address 192.168.7.1/24
-EOF
-#Para el ej 3
-#ip route 0.0.0.0/0 192.168.7.10
-#EOF
+ifdown eth0
+ifup eth0
 
-tee /etc/quagga/ripd.conf > /dev/null << EOF
-hostname ripd
-password zebra
+sudo ip -4 addr add 192.168.7.1/24 broadcast 192.168.7.255 dev eth0
 
-router rip
-
-network eth0
-EOF
-
-service zebra start
-service ripd start
+sudo ip route add 0.0.0.0/0 via 192.168.7.3
