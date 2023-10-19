@@ -3,7 +3,7 @@
 # IPTABLES PCA1
 
 #flush
-iptables -f
+iptables -F
 
 iptables -t nat -A POSTROUTING -o eth0 -p tcp --dport 22 -j SNAT --to 192.168.10.1:2016
 iptables -t nat -A POSTROUTING -o eth0 -p tcp --dport 22 -j SNAT --to 192.168.10.2:2016
