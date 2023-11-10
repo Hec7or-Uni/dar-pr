@@ -72,7 +72,7 @@ function PCB3() {
     ip route add ::/0 dev he-ipv6
 
     # Configuración dirección
-    ip -6 addr add 2000:B::A3/64 dev eth0
+    ip -6 addr add 2000:B::B3/64 dev eth0
     ip route add 2000:B::/64 dev eth0
 
     # configuración router
