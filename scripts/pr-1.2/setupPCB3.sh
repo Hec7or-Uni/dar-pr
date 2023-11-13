@@ -19,3 +19,26 @@ sysctl -w net.ipv4.ip_forward=1
 
 ip -4 link set eth0 mtu 1500
 ip -4 link set eth1 mtu 1500
+
+
+
+
+
+
+
+radvd.conf
+interface eth0
+{
+        AdvSendAdvert on;
+        MinRtrAdvInterval 30;
+        MaxRtrAdvInterval 100;
+        prefix 2000:A::/64
+        {
+                AdvOnLink on;
+                AdvAutonomous on;
+                AdvRouterAddr off;
+        };
+
+};
+
+
