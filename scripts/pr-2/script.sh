@@ -13,13 +13,13 @@ PCA2_ETH0="192.168.10.2"
 PCA3_ETH0="192.168.10.3"
 
 # --- LAN B --------------------
-PCA1_ETH0="192.168.20.1"
-PCA2_ETH0="192.168.20.2"
-PCA3_ETH0="192.168.20.3"
+PCB1_ETH0="192.168.20.1"
+PCB2_ETH0="192.168.20.2"
+PCB3_ETH0="192.168.20.3"
 
 # --- LAN C --------------------
-PCA3_ETH0="192.168.7.10"
-PCB3_ETH0="192.168.7.20"
+PCA3_ETH1="192.168.7.10"
+PCB3_ETH1="192.168.7.20"
 
 # -------------------------------------------------------
 # Functions
@@ -91,7 +91,7 @@ function PCB2() {
 
 function PCA3() {
     # Configuración Tunel
-    ip tunnel add he-ipv6 mode sit remote $PCB3_ETH0 local $PCA3_ETH0 ttl 255
+    ip tunnel add he-ipv6 mode sit remote $PCB3_ETH1 local $PCA3_ETH1 ttl 255
     ip link set he-ipv6 up
     ip addr add 2000:C::A3/64 dev he-ipv6
     ip route add ::/0 dev he-ipv6
@@ -109,7 +109,7 @@ function PCA3() {
 
 function PCB3() {
     # Configuración Tunel
-    ip tunnel add he-ipv6 mode sit remote $PCA3_ETH0 local $PCB3_ETH0 ttl 255
+    ip tunnel add he-ipv6 mode sit remote $PCA3_ETH1 local $PCB3_ETH1 ttl 255
     ip link set he-ipv6 up
     ip addr add 2000:C::B3/64 dev he-ipv6
     ip route add ::/0 dev he-ipv6
