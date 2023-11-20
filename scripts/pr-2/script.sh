@@ -27,11 +27,16 @@ PCB3_ETH0="192.168.7.20"
 
 function IPV6_OFF() {
     sed -i 's/^net.ipv6.conf.all.forwarding.*/net.ipv6.conf.all.forwarding=0/' /etc/sysctl.conf
-    sudo sysctl -p
+    sysctl -p
+}
+
+function IPV6_ON() {
+    sed -i 's/^net.ipv6.conf.all.forwarding.*/net.ipv6.conf.all.forwarding=1/' /etc/sysctl.conf
+    sysctl -p
 }
 
 function CONF_RADVD() {
-    sudo tee /etc/radvd.conf << EOF
+    tee /etc/radvd.conf << EOF
 interface eth0
 {
     AdvSendAdvert on;
@@ -98,6 +103,8 @@ function PCA3() {
     # configuración router
     # configurar fichero /etc/radvd.conf
     # habilitar pkg forwarding ipv6
+    CONF_RADVD
+    IPV6_ON
 }
 
 function PCB3() {
@@ -116,28 +123,30 @@ function PCB3() {
     # configurar fichero /etc/radvd.conf
     # configurar fichero /etc/sysctl.conf
     # habilitar pkg forwarding ipv6
+    CONF_RADVD
+    IPV6_ON
 }
 
 # -------------------------------------------------------
 # Main
 # -------------------------------------------------------
 
-if [ $SELECTED_MACHINE == "PCA1" ]; then
-    PCA1
-elif [ $SELECTED_MACHINE == "PCA2" ]; then
-    PCA2
-elif [ $SELECTED_MACHINE == "PCA3" ]; then
-    PCA3
-elif [ $SELECTED_MACHINE == "PCB1" ]; then
-    PCB1
-elif [ $SELECTED_MACHINE == "PCB2" ]; then
-    PCB2
-elif [ $SELECTED_MACHINE == "PCB3" ]; then
-    PCB3
-elif [ $SELECTED_MACHINE == "PCC1" ]; then
-    PCC1
-elif [ $SELECTED_MACHINE == "PCC2" ]; then
-    PCC2
+if [ $SELECTED_MACHINE = "PCA1" ]; then
+    PCA1;
+elif [ $SELECTED_MACHINE = "PCA2" ]; then
+    PCA2;
+elif [ $SELECTED_MACHINE = "PCA3" ]; then
+    PCA3;
+elif [ $SELECTED_MACHINE = "PCB1" ]; then
+    PCB1;
+elif [ $SELECTED_MACHINE = "PCB2" ]; then
+    PCB2;
+elif [ $SELECTED_MACHINE = "PCB3" ]; then
+    PCB3;
+elif [ $SELECTED_MACHINE = "PCC1" ]; then
+    PCC1;
+elif [ $SELECTED_MACHINE = "PCC2" ]; then
+    PCC2;
 else
-    echo "Elige una maquina valida"
+    echo "Elige una maquina valida";
 fi
