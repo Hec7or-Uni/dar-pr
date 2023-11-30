@@ -42,13 +42,14 @@ function IPV6_ON() {
 }
 
 function CONF_RADVD() {
+if [ $SELECTED_MACHINE = "PCA3" ]; then
     tee /etc/radvd.conf << EOF
 interface eth0
 {
     AdvSendAdvert on;
     MinRtrAdvInterval 30;
     MaxRtrAdvInterval 100;
-    prefix 2001:db8:1:0::/64
+    prefix 2000:A::/64
     {
             AdvOnLink on;
             AdvAutonomous on;
@@ -57,6 +58,25 @@ interface eth0
 
 };
 EOF
+elif [ $SELECTED_MACHINE = "PCB3" ]; then
+    tee /etc/radvd.conf << EOF
+interface eth0
+{
+    AdvSendAdvert on;
+    MinRtrAdvInterval 30;
+    MaxRtrAdvInterval 100;
+    prefix 2000:B::/64
+    {
+            AdvOnLink on;
+            AdvAutonomous on;
+            AdvRouterAddr off;
+    };
+
+};
+EOF
+fi
+
+service radvd restart 
 }
 
 function PCA1() {
