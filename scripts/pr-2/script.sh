@@ -65,7 +65,7 @@ function PCA1() {
 
     # Configuración máquina
     ip -6 addr add 2000:A::A1/64 dev eth0
-    ip -6 route add ::/0 dev eth0
+    ip -6 route add ::/0 via 2000:A::A3 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
@@ -76,7 +76,7 @@ function PCA2() {
 
     # Configuración máquina
     ip -6 addr add 2000:A::A2/64 dev eth0
-    ip -6 route add ::/0 dev eth0
+    ip -6 route add ::/0 via 2000:A::A3 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
@@ -87,7 +87,7 @@ function PCB1() {
 
     # Configuración máquina
     ip -6 addr add 2000:B::B1/64 dev eth0
-    ip -6 route add ::/0 dev eth0
+    ip -6 route add ::/0 via 2000:B::B3 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
@@ -98,7 +98,7 @@ function PCB2() {
 
     # Configuración máquina
     ip -6 addr add 2000:B::B2/64 dev eth0
-    ip -6 route add ::/0 dev eth0
+    ip -6 route add ::/0 via 2000:B::B3 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
