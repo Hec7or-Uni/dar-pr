@@ -25,6 +25,12 @@ PCB3_ETH1="192.168.7.20"
 # Functions
 # -------------------------------------------------------
 
+function SET_ALIASES() {
+    alias net='ifconfig && route -nn'
+    alias ll='ls -l'
+    alias la='ls -la'
+}
+
 function IPV6_OFF() {
     sed -i 's/^net.ipv6.conf.all.forwarding.*/net.ipv6.conf.all.forwarding=0/' /etc/sysctl.conf
     sysctl -p
@@ -54,86 +60,107 @@ EOF
 }
 
 function PCA1() {
+    ifdown eth1
+    ip -4 addr del ${PCA1_ETH0}/24 dev eth0
+
     # Configuración máquina
     ip -6 addr add 2000:A::A1/64 dev eth0
-    ip route add 2000:C::A3/64 dev eth0
-    #service network restart
+    ip -6 route add ::/0 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
 
 function PCA2() {
+    ifdown eth1
+    ip -4 addr del ${PCA2_ETH0}/24 dev eth0
+
     # Configuración máquina
     ip -6 addr add 2000:A::A2/64 dev eth0
-    ip route add 2000:C::A3/64 dev eth0
-    #service network restart
+    ip -6 route add ::/0 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
 
 function PCB1() {
+    ifdown eth1
+    ip -4 addr del ${PCB1_ETH0}/24 dev eth0
+
     # Configuración máquina
     ip -6 addr add 2000:B::B1/64 dev eth0
-    ip route add 2000:C::B3/64 dev eth0
-    #service network restart
+    ip -6 route add ::/0 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
 
 function PCB2() {
+    ifdown eth1
+    ip -4 addr del ${PCB1_ETH0}/24 dev eth0
+
     # Configuración máquina
     ip -6 addr add 2000:B::B2/64 dev eth0
-    ip route add 2000:C::B3/64 dev eth0
-    #service network restart
+    ip -6 route add ::/0 dev eth0
     # desactivar el forwarding de pkgs ipv6
     IPV6_OFF
 }
 
 function PCA3() {
+    ip -4 addr del ${PCA3_ETH0}/24 dev eth0
+    ip -4 addr del ${PCA3_ETH1}/24 dev eth1
+
     ip -4 addr add ${PCA3_ETH1}/24 broadcast 192.168.7.255 dev eth1
 
     # Configuración Tunel
-    ip tunnel add he-ipv6 mode sit remote $PCB3_ETH1 local $PCA3_ETH1 ttl 255
-    ip link set he-ipv6 up
-    ip addr add 2000:C::A3/64 dev he-ipv6
-    ip route add ::/0 dev he-ipv6
+    modprobe ipv6
+    ip tunnel add ${TUN_NAME} mode sit remote $PCB3_ETH1 local $PCA3_ETH1 ttl 255
+    ip link set ${TUN_NAME} up
+    ip addr add 2000:C::A3/64 dev ${TUN_NAME}
+    ip route add ::/0 dev ${TUN_NAME}
 
     # Configuración dirección
     ip -6 addr add 2000:A::A3/64 dev eth0
-    ip route add 2000:A::/64 dev eth0
-    #service network restart
     # configuración router
+    ip -6 route add 2000:A::/64 dev eth0
+    ip -6 route add ::/0 dev ${TUN_NAME}
     # configurar fichero /etc/radvd.conf
-    # habilitar pkg forwarding ipv6
     CONF_RADVD
+    # configurar fichero /etc/sysctl.conf
+    # habilitar pkg forwarding ipv6
     IPV6_ON
 }
 
 function PCB3() {
+    ip -4 addr del ${PCB3_ETH0}/24 dev eth0
+    ip -4 addr del ${PCB3_ETH1}/24 dev eth1
+
     ip -4 addr add ${PCB3_ETH1}/24 broadcast 192.168.7.255 dev eth1
 
     # Configuración Tunel
-    ip tunnel add he-ipv6 mode sit remote $PCA3_ETH1 local $PCB3_ETH1 ttl 255
-    ip link set he-ipv6 up
-    ip addr add 2000:C::B3/64 dev he-ipv6
-    ip route add ::/0 dev he-ipv6
+    modprobe ipv6
+    ip tunnel add ${TUN_NAME} mode sit remote $PCA3_ETH1 local $PCB3_ETH1 ttl 255
+    ip link set ${TUN_NAME} up
+    ip addr add 2000:C::B3/64 dev ${TUN_NAME}
+    ip route add ::/0 dev ${TUN_NAME}
 
     # Configuración dirección
     ip -6 addr add 2000:B::B3/64 dev eth0
-    ip route add 2000:B::/64 dev eth0
-    #service network restart
-
     # configuración router
+    ip -6 route add 2000:B::/64 dev eth0
+    ip -6 route add ::/0 dev ${TUN_NAME}
+
     # configurar fichero /etc/radvd.conf
+    CONF_RADVD
     # configurar fichero /etc/sysctl.conf
     # habilitar pkg forwarding ipv6
-    CONF_RADVD
     IPV6_ON
 }
 
 # -------------------------------------------------------
 # Main
 # -------------------------------------------------------
+
+# Reinicio de la red para partir de un estado inicial
+service network restart
+SET_ALIASES
 
 if [ $SELECTED_MACHINE = "PCA1" ]; then
     PCA1;
