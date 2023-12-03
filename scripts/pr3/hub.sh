@@ -133,15 +133,15 @@ function process_file() {
 }
 
 if ! command -v snmpwalk &> /dev/null; then
-    echo "Error: El sistema no tiene habilitada la herramienta snmp."
-    echo "      yum install net-snmp-utils"
-    echo "      apt install snmp"
+    echo "Error: El sistema no tiene habilitada la herramienta snmp." >&2
+    echo "      yum install net-snmp-utils" >&2
+    echo "      apt install snmp" >&2
     exit 1
 fi
 
 # Verificar si se proporcionan argumentos
 if [ "$#" -eq 0 ]; then
-    echo "Uso: $0 [ FILE | DIR ]..."
+    echo "Uso: $0 [ FILE | DIR ]..." >&2
     exit 1
 fi
 
@@ -162,7 +162,7 @@ for item in "$@"; do
             fi
         done
     else
-        echo "Error: $item no es un fichero ni un directorio válido."
+        echo "Error: $item no es un fichero ni un directorio válido." >&2
     fi
 done
 
