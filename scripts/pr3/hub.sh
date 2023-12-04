@@ -16,7 +16,7 @@ function set() {
     port="$3"
     value="$4"
 
-    snmpset -v 1 -c "$community" "$ip" ".1.3.6.1.4.1.43.10.26.1.1.1.5.1.$port" "$value"
+    snmpset -v 1 -c "$community" "$ip" ".1.3.6.1.4.1.43.10.26.1.1.1.5.1.$port" i $value
     return $?
 }
 
@@ -80,10 +80,7 @@ function process_file() {
     available_port_list=$(echo "$available_port_list" | sed -nE 's/.*\.([0-9]+) = INTEGER: ([0-9]+)/\1/p')
 
     function is_port() { [ $(appearances "$available_port_list" "$1") -gt 0 ]; return $?; }
-    function is_segment() { [ $(appearances "$available_port_list" $(("$1" + 1000))) -gt 0 ]; return $?; }
-
-    echo ${port_array[@]}
-    echo ${segment_array[@]}
+    function is_segment() { [ $(appearances "$available_port_list" $(($1 + 1000))) -gt 0 ]; return $?; }
 
     # Asignación puerto-segmento en paralelo
     for ((i = 0; i < ${#segment_array[@]}; i+=1)); do
@@ -107,7 +104,6 @@ function process_file() {
         fi
     } & # Cada puerto en paralelo
     done
-    wait
 
     # Asignación del segmento default al resto de puertos
     if [ "$default_segment" = "" ]; then
