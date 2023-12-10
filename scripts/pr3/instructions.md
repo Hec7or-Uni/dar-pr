@@ -217,7 +217,7 @@ Como las máquinas pertenecen a dos VLAN distintas, es necesario que haya encami
 
 El último enlace por el que pasaría el mensaje request sería el que une PC2 y C3725-1, pero no tenemos una captura que lo compruebe. En ella se debería ver el paquete correspondiente sin campo Virtual LAN en ethernet, sólo los 2 bytes de tipo, con valor TTL 63 y las mismas direcciones IP y MAC que el paquete 115 de s2.
 
-![Esquema de la comunicación](https://github.com/Hec7or-Uni/dar-pr/blob/main/scripts/pr3/pr3_1_P13.png)
+![Esquema de la comunicación](https://github.com/Hec7or-Uni/dar-pr/blob/main/scripts/pr3/pr3_1_P13.svg)
 
 En las capturas también se pueden ver los mensajes ARP necesarios para obtener las direcciones MAC. En la captura s1 nos interesan 2 paquetes: 12 y 18. El primero es un mensaje ARP del router anunciando su MAC (la ip origen es 192.168.2.254), y por ello PC1 es capaz de enviar un primer request sin preguntar por la MAC destino. Como el router no ha recibido ninguna pregunta ARP, no sabe la MAC de PC1, por lo que envía el segundo. El ICMP request en este caso corresponde a un ping entre PC1 y el router, pero el comportamiento si el ping fuera entre PC1 y PC2 sería el mismo. En la captura s2 vemos también el anuncio ARP, esta vez en ambas VLAN (paquetes 48 y 50). Aún así, el router sigue sin saber la MAC de PC2, por lo que se ve obligado a preguntar en el paquete 66.
 
